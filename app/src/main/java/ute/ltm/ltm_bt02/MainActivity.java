@@ -14,7 +14,6 @@ import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,7 +28,6 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity {
 
     ConstraintLayout bg;
-    ImageView img2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,15 +106,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        img2 = findViewById(R.id.progressBar2);
-        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar2);
-        img2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int current = progressBar.getProgress();
-                if (current>= progressBar.getMax()){
-                    current=0;
-                }
+        ProgressBar progressBar = findViewById(R.id.progressBar2);
+        progressBar.setOnClickListener(v -> {
+            int current = progressBar.getProgress();
+            if (current >= progressBar.getMax()) {
+                progressBar.setProgress(0);
+            } else {
                 progressBar.setProgress(current + 10);
             }
         });
