@@ -1,11 +1,10 @@
 package ute.ltm.ltm_bt02;
 
 import android.app.Dialog;
-import android.graphics.Color;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -18,12 +17,11 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
+import androidx.core.graphics.Insets;
 import androidx.core.view.WindowInsetsCompat;
 
 import java.util.ArrayList;
@@ -37,16 +35,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
         bg = findViewById(R.id.constraintLayout1);
 
-        // Khởi tạo danh sách hình nền
         initializeBackgrounds();
-
-        // 1. Tự động thay đổi hình nền khi load app
-        changeBackgroundRandomly();
 
         TextView myText = findViewById(R.id.text_id);
         myText.setText("Text View day ne!");
@@ -76,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
             txtSoN.setText(String.valueOf(number));
         });
 
-        // 2. Viết hàm thay đổi hình nền app khi bấm vào control Switch
         Switch sw = findViewById(R.id.switch1);
         sw.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
@@ -97,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //RadioGroup
         RadioGroup radioGroup = findViewById(R.id.radioGroup1);
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId == R.id.radioButton1) {
@@ -117,14 +108,29 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button btnOpenDialog = findViewById(R.id.buttonOpenDialog);
-        btnOpenDialog.setOnClickListener(v -> showCustomDialog());
+        Button btnGoToLinearLayout = findViewById(R.id.btnGoToLinearLayout);
+        btnGoToLinearLayout.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, LinearLayoutActivity.class);
+            startActivity(intent);
+        });
+
+        Button btnGoToLogin = findViewById(R.id.btnGoToLogin);
+        btnGoToLogin.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+        });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.constraintLayout1), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        changeBackgroundRandomly();
     }
 
     private void initializeBackgrounds() {
@@ -135,7 +141,6 @@ public class MainActivity extends AppCompatActivity {
         backgroundDrawables.add(R.drawable.bg4);
     }
 
-    // 1. Hàm tự động thay đổi hình nền của app khi mỗi lần load app
     private void changeBackgroundRandomly() {
         if (backgroundDrawables != null && !backgroundDrawables.isEmpty()) {
             Random random = new Random();
@@ -144,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void showCustomDialog(){
+    private void showCustomDialog() {
         Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_custom);
