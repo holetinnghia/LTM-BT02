@@ -42,11 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
         bg = findViewById(R.id.constraintLayout1);
 
-        // Khởi tạo danh sách hình nền
         initializeBackgrounds();
-
-        // 1. Tự động thay đổi hình nền khi load app
-        changeBackgroundRandomly();
 
         TextView myText = findViewById(R.id.text_id);
         myText.setText("Text View day ne!");
@@ -127,6 +123,13 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Thay đổi hình nền mỗi khi activity được hiển thị
+        changeBackgroundRandomly();
+    }
+
     private void initializeBackgrounds() {
         backgroundDrawables = new ArrayList<>();
         backgroundDrawables.add(R.drawable.bg1);
@@ -134,8 +137,7 @@ public class MainActivity extends AppCompatActivity {
         backgroundDrawables.add(R.drawable.bg3);
         backgroundDrawables.add(R.drawable.bg4);
     }
-
-    // 1. Hàm tự động thay đổi hình nền của app khi mỗi lần load app
+    
     private void changeBackgroundRandomly() {
         if (backgroundDrawables != null && !backgroundDrawables.isEmpty()) {
             Random random = new Random();
