@@ -1,13 +1,16 @@
 package ute.ltm.ltm_bt02;
 
+import android.app.Dialog;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
@@ -16,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.Insets;
@@ -28,12 +32,21 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity {
 
     ConstraintLayout bg;
+    private ArrayList<Integer> backgroundDrawables;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+
+        bg = findViewById(R.id.constraintLayout1);
+
+        // Khởi tạo danh sách hình nền
+        initializeBackgrounds();
+
+        // 1. Tự động thay đổi hình nền khi load app
+        changeBackgroundRandomly();
 
         TextView myText = findViewById(R.id.text_id);
         myText.setText("Text View day ne!");
@@ -63,26 +76,15 @@ public class MainActivity extends AppCompatActivity {
             txtSoN.setText(String.valueOf(number));
         });
 
-        bg = findViewById(R.id.constraintLayout1);
-        bg.setBackgroundColor(Color.BLUE);
-        bg.setBackgroundResource(R.drawable.bg2);
-
-        ArrayList<Integer> arrayList = new ArrayList<>();
-        arrayList.add(R.drawable.bg1);
-        arrayList.add(R.drawable.bg2);
-        arrayList.add(R.drawable.bg3);
-        arrayList.add(R.drawable.bg4);
-        Random random = new Random();
-        int vitri = random.nextInt(arrayList.size());
-        bg.setBackgroundResource(arrayList.get(vitri));
-
+        // 2. Viết hàm thay đổi hình nền app khi bấm vào control Switch
         Switch sw = findViewById(R.id.switch1);
         sw.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) { //isChecked = true
-                Toast.makeText(MainActivity.this, "Wifi đang bật", Toast.LENGTH_LONG).show();
+            if (isChecked) {
+                bg.setBackgroundResource(R.drawable.bg1);
+                Toast.makeText(MainActivity.this, "Đã chuyển sang nền 1", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(MainActivity.this,
-                        "Wifi đang tắt", Toast.LENGTH_LONG).show();
+                bg.setBackgroundResource(R.drawable.bg2);
+                Toast.makeText(MainActivity.this, "Đã chuyển sang nền 2", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -91,7 +93,6 @@ public class MainActivity extends AppCompatActivity {
             if (isChecked) {
                 bg.setBackgroundResource(R.drawable.bg3);
             } else {
-
                 bg.setBackgroundResource(R.drawable.bg4);
             }
         });
@@ -116,10 +117,70 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button btnOpenDialog = findViewById(R.id.buttonOpenDialog);
+        btnOpenDialog.setOnClickListener(v -> showCustomDialog());
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.constraintLayout1), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
+
+    private void initializeBackgrounds() {
+        backgroundDrawables = new ArrayList<>();
+        backgroundDrawables.add(R.drawable.bg1);
+        backgroundDrawables.add(R.drawable.bg2);
+        backgroundDrawables.add(R.drawable.bg3);
+        backgroundDrawables.add(R.drawable.bg4);
+    }
+
+    // 1. Hàm tự động thay đổi hình nền của app khi mỗi lần load app
+    private void changeBackgroundRandomly() {
+        if (backgroundDrawables != null && !backgroundDrawables.isEmpty()) {
+            Random random = new Random();
+            int vitri = random.nextInt(backgroundDrawables.size());
+            bg.setBackgroundResource(backgroundDrawables.get(vitri));
+        }
+    }
+
+    private void showCustomDialog(){
+        Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_custom);
+        dialog.setCanceledOnTouchOutside(false);
+        EditText editMSSV = dialog.findViewById(R.id.editMSSV);
+        EditText editHoTen = dialog.findViewById(R.id.editHoTen);
+        Button buttonCapNhat = dialog.findViewById(R.id.buttonCapNhat);
+        Button buttonHuy = dialog.findViewById(R.id.buttonHuy);
+
+        buttonCapNhat.setOnClickListener(v -> {
+            String mssv = editMSSV.getText().toString();
+            String hoTen = editHoTen.getText().toString();
+            Toast.makeText(MainActivity.this, "Cập nhật: " + mssv + " - " + hoTen, Toast.LENGTH_SHORT).show();
+            dialog.dismiss();
+        });
+
+        buttonHuy.setOnClickListener(v -> dialog.dismiss());
+        dialog.show();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_setting, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+        if (itemId == R.id.menuSetting) {
+            showCustomDialog();
+        } else if (itemId == R.id.menuShare) {
+            Toast.makeText(this, "Bạn chọn Share", Toast.LENGTH_SHORT).show();
+        } else if (itemId == R.id.menuLogout) {
+            Toast.makeText(this, "Bạn chọn Logout", Toast.LENGTH_SHORT).show();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
